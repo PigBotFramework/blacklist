@@ -1,5 +1,6 @@
 from pbf import PBF
 from utils.RegCmd import RegCmd
+import time
 
 _name = "黑白系统"
 _version = "1.0.1"
@@ -63,7 +64,7 @@ class blacklist(PBF):
             RegCmd(
                 name = "加全局屏蔽 ",
                 usage = "加全局屏蔽 <要加的qq号> <原因>",
-                permission = "ro",
+                permission = "owner",
                 function = "blacklist@addQuanjing",
                 description = "添加某个被全局屏蔽的人",
                 mode = "全局屏蔽",
