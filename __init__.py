@@ -1,5 +1,5 @@
-from pbf import PBF
-from utils.RegCmd import RegCmd
+from pbf.controller.PBF import PBF
+from pbf.utils.RegCmd import RegCmd
 import time
 
 _name = "黑白系统"
@@ -9,110 +9,13 @@ _author = "xzyStudio"
 _cost = 0.00
 
 class blacklist(PBF):
-    def __enter__(self):
-        return [
-            RegCmd(
-                name = "加违禁词 ",
-                usage = "加违禁词 <违禁词内容>",
-                permission = "anyone",
-                function = "blacklist@addWeijin",
-                description = "添加违禁词",
-                mode = "违禁系统",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "删违禁词 ",
-                usage = "删违禁词 <违禁词内容>",
-                permission = "anyone",
-                function = "blacklist@delWeijin",
-                description = "删除指定的违禁词",
-                mode = "违禁系统",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "删群违禁词 ",
-                usage = "删群违禁词 <违禁词内容>",
-                permission = "ao",
-                function = "blacklist@delQunWeijin",
-                description = "删除指定的群聊违禁词",
-                mode = "违禁系统",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "全局屏蔽列表",
-                usage = "全局屏蔽列表",
-                permission = "anyone",
-                function = "blacklist@listQuanjing",
-                description = "列出被全局屏蔽的人",
-                mode = "全局屏蔽",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "删全局屏蔽 ",
-                usage = "删全局屏蔽 <要删的qq号>",
-                permission = "ro",
-                function = "blacklist@deleteQuanjing",
-                description = "删除某个被全局屏蔽的人",
-                mode = "全局屏蔽",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "加全局屏蔽 ",
-                usage = "加全局屏蔽 <要加的qq号> <原因>",
-                permission = "owner",
-                function = "blacklist@addQuanjing",
-                description = "添加某个被全局屏蔽的人",
-                mode = "全局屏蔽",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "违禁词垃圾箱",
-                usage = "违禁词垃圾箱",
-                permission = "owner",
-                function = "blacklist@bWj",
-                description = "查看违禁词垃圾箱",
-                mode = "违禁系统",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "违禁词审查列表",
-                usage = "违禁词审查列表",
-                permission = "owner",
-                function = "blacklist@vWj",
-                description = "查看违禁词审核列表",
-                mode = "违禁系统",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "违禁词删除列表",
-                usage = "违禁词删除列表",
-                permission = "owner",
-                function = "blacklist@dvWj",
-                description = "查看违禁词删除列表",
-                mode = "违禁系统",
-                hidden = 0,
-                type = "command"
-            ),
-            RegCmd(
-                name = "违禁词审查 ",
-                usage = "违禁词审查 <ID> <是否通过>",
-                permission = "owner",
-                function = "blacklist@tWj",
-                description = "审核违禁词",
-                mode = "违禁系统",
-                hidden = 0,
-                type = "command"
-            )
-        ]
-        
+    @RegCmd(
+        name = "加违禁词 ",
+        usage = "加违禁词 <违禁词内容>",
+        permission = "anyone",
+        description = "添加违禁词",
+        mode = "违禁系统"
+    )
     def addWeijin(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -127,8 +30,15 @@ class blacklist(PBF):
                 self.mysql.commonx('INSERT INTO `botWeijin` (`content`, `state`, `qn`) VALUES (%s, 1, 0)', (message))
         self.client.msg().raw('[CQ:face,id=54] 插入成功，等待审核！')
         
-        refreshFromSql('botWeijin')
-        
+        Cache.refreshFromSql('botWeijin')
+    
+    @RegCmd(
+        name = "违禁词垃圾箱",
+        usage = "违禁词垃圾箱",
+        permission = "owner",
+        description = "查看违禁词垃圾箱",
+        mode = "违禁系统"
+    )
     def bWj(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -138,7 +48,14 @@ class blacklist(PBF):
         for i in vKwList:
             message += '\n[CQ:face,id=54] 违禁词：'+str(i.get('content'))+'\n      ID：'+str(i.get('id'))
         self.client.msg().raw(message)
-        
+    
+    @RegCmd(
+        name = "违禁词审查列表",
+        usage = "违禁词审查列表",
+        permission = "owner",
+        description = "查看违禁词审核列表",
+        mode = "违禁系统"
+    )
     def vWj(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -148,7 +65,14 @@ class blacklist(PBF):
         for i in vKwList:
             message += '\n[CQ:face,id=54] 违禁词：'+str(i.get('content'))+'\n      ID：'+str(i.get('id'))
         self.client.msg().raw(message)
-        
+    
+    @RegCmd(
+        name = "违禁词删除列表",
+        usage = "违禁词删除列表",
+        permission = "owner",
+        description = "查看违禁词删除列表",
+        mode = "违禁系统"
+    )
     def dvWj(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -158,7 +82,14 @@ class blacklist(PBF):
         for i in vKwList:
             message += '\n[CQ:face,id=54] 违禁词：'+str(i.get('content'))+'\n      ID：'+str(i.get('id'))
         self.client.msg().raw(message)
-        
+    
+    @RegCmd(
+        name = "违禁词审查 ",
+        usage = "违禁词审查 <ID> <是否通过>",
+        permission = "owner",
+        description = "审核违禁词",
+        mode = "违禁系统"
+    )
     def tWj(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -179,6 +110,14 @@ class blacklist(PBF):
         
         refreshFromSql('botWeijin')
         
+    
+    @RegCmd(
+        name = "删违禁词 ",
+        usage = "删违禁词 <违禁词内容>",
+        permission = "anyone",
+        description = "删除指定的违禁词",
+        mode = "违禁系统"
+    )
     def delWeijin(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -193,7 +132,14 @@ class blacklist(PBF):
         self.client.msg().raw('[CQ:face,id=54] 已提交申请，等待审核！')
         
         refreshFromSql('botWeijin')
-        
+    
+    @RegCmd(
+        name = "删群违禁词 ",
+        usage = "删群违禁词 <违禁词内容>",
+        permission = "ao",
+        description = "删除指定的群聊违禁词",
+        mode = "违禁系统"
+    )
     def delQunWeijin(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -205,6 +151,13 @@ class blacklist(PBF):
         
         refreshFromSql('botWeijin')
     
+    @RegCmd(
+        name = "全局屏蔽列表",
+        usage = "全局屏蔽列表",
+        permission = "anyone",
+        description = "列出被全局屏蔽的人",
+        mode = "全局屏蔽"
+    )
     def listQuanjing(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -214,7 +167,14 @@ class blacklist(PBF):
         for i in quanjing:
             message += '\n[CQ:face,id=54] 用户：'+str(i.get('qn'))+'\n     原因：'+str(i.get('reason'))
         self.client.msg().raw(message)
-        
+    
+    @RegCmd(
+        name = "删全局屏蔽 ",
+        usage = "删全局屏蔽 <要删的qq号>",
+        permission = "ro",
+        description = "删除某个被全局屏蔽的人",
+        mode = "全局屏蔽"
+    )
     def deleteQuanjing(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
@@ -225,7 +185,14 @@ class blacklist(PBF):
         self.client.msg().raw('[CQ:face,id=54] 删除成功！')
         
         refreshFromSql('globalBanned')
-    
+
+    @RegCmd(
+        name = "加全局屏蔽 ",
+        usage = "加全局屏蔽 <要加的qq号> <原因>",
+        permission = "owner",
+        description = "添加某个被全局屏蔽的人",
+        mode = "全局屏蔽"
+    )
     def addQuanjing(self):
         uid = self.data.se.get('user_id')
         gid = self.data.se.get('group_id')
