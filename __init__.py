@@ -159,7 +159,6 @@ class blacklist(PBF):
         gid = self.data.se.get('group_id')
 
         message = '[CQ:face,id=189] {0}-全局拉黑列表'.format(self.data.botSettings._get('name'))
-        # TODO 此处获取库中所有信息待处理
         modelBase = ModelBase()
         modelBase.db_table = 'black_list'
         quanjing = Cache.get(modelBase._c())
