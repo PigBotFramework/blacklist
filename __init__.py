@@ -6,6 +6,7 @@ from pbf.model.BlackListModel import BlackListModel
 from pbf.model.BanWordsModel import BanWordsModel
 from pbf.model import ModelBase
 from pbf.utils.RegCmd import RegCmd
+from pbf.statement.FaceStatement import FaceStatement
 
 _name = "黑白系统"
 _version = "1.0.1"
@@ -28,13 +29,16 @@ class blacklist(PBF):
         message = self.data.args[1]
 
         if self.data.args[-1] == "单群":
-            BanWordsModel()._insert(content=message, state=0, qn=self.data.se.get("group_id"))
+            BanWordsModel()._insert(content=message, state=0, qn=gid, uuid=self.data.uuid)
         else:
             if uid == self.data.botSettings._get('owner'):
-                BanWordsModel()._insert(content=message, state=0)
+                BanWordsModel()._insert(content=message, state=0, qn=0, uuid=self.data.uuid)
             else:
-                BanWordsModel()._insert(content=message, state=1, qn=0)
-        self.client.msg().raw('[CQ:face,id=54] 插入成功，等待审核！')
+                BanWordsModel()._insert(content=message, state=1, qn=0, uuid=self.data.uuid)
+        self.client.msg(
+            FaceStatement(54),
+            TextStatement(' 插入成功，等待审核！')
+        ).send()
 
     @RegCmd(
         name="违禁词垃圾箱",
