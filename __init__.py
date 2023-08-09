@@ -6,6 +6,7 @@ from pbf.model.BlackListModel import BlackListModel
 from pbf.model.BanWordsModel import BanWordsModel
 from pbf.model import ModelBase
 from pbf.utils.RegCmd import RegCmd
+from pbf.statement.TextStatement import TextStatement
 from pbf.statement.FaceStatement import FaceStatement
 
 _name = "黑白系统"
